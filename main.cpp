@@ -1,159 +1,281 @@
-//
-//  main.cpp
-//  LAB216 November  2
-//
-//  Created by Sitthiphol Yuwanaboon on 11/2/20.
-//
+////
+////  main.cpp
+////  NOV 30 Lab Assignment
+////
+////  Created by Sitthiphol Yuwanaboon on 11/30/20.
+////
 
 #include <iostream>
+#include<string>
 using namespace std;
-class test{
-    int value;
-
-public:
-   int  getValue(){return value;}
-    void setValue(int v){value= v;}
-};
-
-
-class intArray{
+//Create a class timeoff
+class NumDays {
+//Instance variables
 private:
-    int* aPtr;
-    int arraySize;
+   double hours;
+   double days;
+//Member functions
 public:
-    intArray(int size, int value);
-    void print();
-    void setValue(int value);
-    //overlaod copy constructor
-    intArray(const intArray& exiArray);
-    //overload assignment statement
-    //void operator = (const intArray& rightArray);
-    intArray operator = (const intArray& rightArray);
-    
+   NumDays() {
+       hours = 0;
+       days = 0;
+   }
+   //Constructor
+   NumDays(double hrs) {
+       hours = hrs;
+       days = hrs / 8;
+   }
+   //Getter
+   double gethours() {
+       return hours;
+   }
+   double getDays() {
+       return days;
+   }
+   //Operator+ overload
+   friend NumDays operator+(const NumDays &n1, const NumDays &n2) {
+       NumDays numdays(n1.hours + n2.hours);
+       numdays.days = numdays.hours / 8;
+       return numdays;
+   }
+   //Operator - overload
+   friend NumDays operator-(const NumDays &n1, const NumDays &n2) {
+       NumDays numdays(n1.hours - n2.hours);
+       numdays.days = numdays.hours / 8;
+       return numdays;
+   }
+   //Operator++ overload
+   void operator ++() {
+       hours++;
+       days = hours / 8;
+   }
+   //Operator --overload
+   void operator --() {
+       hours--;
+       days = hours / 8;
+   }
 };
-intArray intArray::operator=(const intArray &rightArray){
-
-    if (arraySize > 0)
-        delete [] aPtr;
-    arraySize= rightArray.arraySize;
-    aPtr =new int [arraySize];
-    for(int i = 0; i < arraySize; i++){
-        aPtr[i]=rightArray.aPtr[i];
-    }
-    return *this;
-}
-
-intArray::intArray(const intArray & exiArray){
-    arraySize = exiArray.arraySize;
-    aPtr= new int [arraySize];
-    for(int i = 0; i < arraySize; i++)
-        aPtr[i] = exiArray.aPtr[i];
-
-}
-
-
-
-intArray::intArray(int size, int value){
-    arraySize = size;
-    aPtr= new int[arraySize];
-    setValue(value);
-}
-void intArray:: print() {
-    for (int i = 0; i< arraySize;i++)
-    cout << aPtr[i]<< " ";
-    cout << endl;
-}
-
-void intArray::setValue(int value){
-    for(int i= 0; i<arraySize;i++)
-    aPtr[i]= value;
+//create a class TimeOff
+class TimeOff {
+//Instance variables
+private:
+   string empName;
+   int empId;
+   NumDays   maxSickDays;
+   NumDays   sickTaken;
+   NumDays   maxVacation;
+   NumDays   vacTaken;
+   NumDays   maxUnpaid;
+   NumDays   unpaidTaken;
+//Member functions
+public:
+   //defualt constructor
+   TimeOff(){
+       empName = "";
+       empId = 0;
+       maxSickDays = 0;
+       sickTaken = 0;
+       maxVacation = 0;
+       vacTaken = 0;
+       maxUnpaid = 0;
+       unpaidTaken = 0;
+   }
+   //Parameterized constructor
+   TimeOff(string name, int id, NumDays maxSick, NumDays sick, NumDays maxVocn, NumDays vocn, NumDays maxUpaid, NumDays uPaid) {
+       if ((sick.gethours() + vocn.gethours()) <= 240) {
+           empName = name;
+           empId = id;
+           maxSickDays = maxSick;
+           if (sick.gethours() <= maxSick.gethours()) {
+               sickTaken = sick;
+           }
+           maxVacation = maxVocn;
+           if (vocn.gethours() <= maxVacation.gethours()) {
+               vacTaken = vocn;
+           }
+           maxUnpaid = maxUpaid;
+           if (uPaid.gethours() <= maxUnpaid.gethours()) {
+               unpaidTaken=uPaid;
+           }
+       }
+   }
+   //Accessors
+   string getName() {
+       return empName;
+   }
+   int getId() {
+       return empId;
+   }
+   NumDays getMaxSick() {
+       return maxSickDays;
+   }
+   NumDays getSick() {
+       return sickTaken;
+   }
+   NumDays getMaxVocation() {
+       return maxVacation;
+   }
+   NumDays getVocation() {
+       return vacTaken;
+   }
+   NumDays getMaxUnPaid() {
+       return maxUnpaid;
+   }
+   NumDays getUnPaid() {
+       return unpaidTaken;
+   }
+   //Mutators
+   void setName(string name) {
+       empName=name;
+   }
+   void setId(int id) {
+       empId=id;
+   }
+   void setMaxSick(NumDays s) {
+       maxSickDays=s;
+   }
+   void setSick(NumDays s) {
+       if (maxSickDays .gethours()>= s.gethours()) {
+           sickTaken = s;
+       }
+   }
+   void setMaxVocation(NumDays v) {
+       maxVacation = v;
+   }
+   void setVocation(NumDays v) {
+       if (maxVacation.gethours() >= v.gethours()) {
+           vacTaken = v;
+       }
+   }
+   void setMaxUnPaid(NumDays un) {
+       maxUnpaid = un;
+   }
+   void setUnpaid(NumDays un) {
+       if (maxUnpaid.gethours() >= un.gethours()) {
+           unpaidTaken = un;
+       }
+   }
+   friend ostream& operator<<(ostream& out,TimeOff &toff) {
+       cout << " EmployeeName: " << toff.empName << endl;
+       cout << " Id: " << toff.empId <<endl;
+       cout <<" SickLeave: " << toff.sickTaken.getDays() << endl;
+       cout << " Vocation: " << toff.vacTaken.getDays() << endl;
+       cout << " Unpaid:" << toff.unpaidTaken.getDays() << endl;
+       return out;
+   }
+};
+int main()
+{
     
-}
-
-int main() {
+   //create an object of time off class
+   TimeOff toff("Lebron James", 1123, NumDays(120), NumDays(60), NumDays(120), NumDays(60), NumDays(120), NumDays(40));
+   //Print using overload
+   cout << toff << endl;
+   //Increamet days
+   NumDays num(60);
+   for (int i = 0; i < 10; i++) {
+       ++num;;
+   }
+   //Add into time off sick days
+   toff.setSick(num);
+   //Display
+   cout << toff<< endl;
+   //Create second object and assign first
+   TimeOff toff2;
+   toff2 = toff;
+   //Display
+   cout << toff2 << endl;
     
-    test t1;
-    t1.setValue(10);
-    test t2 = t1;
+    TimeOff toff3("Justin bieber", 1126, NumDays(120), NumDays(70), NumDays(120), NumDays(80), NumDays(120), NumDays(80));
+    TimeOff toff4("Naruto Km", 100, NumDays(120), NumDays(80), NumDays(120), NumDays(82), NumDays(120), NumDays(80));
+    TimeOff toff5("Kim Jeong", 3311, NumDays(120), NumDays(90), NumDays(120), NumDays(82), NumDays(120), NumDays(80));
+    TimeOff toff6("JOOPER", 2002, NumDays(120), NumDays(100), NumDays(120), NumDays(81), NumDays(120), NumDays(80));
+    TimeOff toff7("KENNy D", 2019, NumDays(120), NumDays(55), NumDays(120), NumDays(80), NumDays(120), NumDays(80));
+    TimeOff toff8("Marshall D", 1002, NumDays(120), NumDays(45), NumDays(120), NumDays(83), NumDays(120), NumDays(80));
+    TimeOff toff9("White bread", 1111, NumDays(120), NumDays(23), NumDays(120), NumDays(83), NumDays(120), NumDays(80));
+    TimeOff toff10("Jonny Danny", 1114, NumDays(120), NumDays(60), NumDays(120), NumDays(83), NumDays(120), NumDays(80));
+    TimeOff toff11("LOVE CRAZY", 2040, NumDays(120), NumDays(67), NumDays(120), NumDays(83), NumDays(120), NumDays(80));
     
-    cout << t1.getValue()<< endl;
-    cout << t2.getValue()<< endl;
-    
-    t1.setValue(19);
-    
-    cout << t1.getValue()<< endl;
-    cout << t2.getValue()<< endl;
-    
-    cout<< "--------------------------------" << endl;
-    
-    
-    
-    intArray intArray1(5,10);
-    intArray intArray2= intArray1; //copy array1 object of class to object of array2
-    intArray1.print();
-    intArray2.print();
-    
-    cout << "-------" << endl;
-    
-    intArray2.setValue(20);
-    
-    intArray1.print();
-    intArray2.print();
-    
-    cout << "------------------------------" << endl;
-    
-    
-    intArray intArray3 (5,11);
-    intArray1.print();
-    intArray3.print();
-    cout << "----------" << endl;
-    intArray3 = intArray1;
-    
-    intArray1.print();
-    intArray3.print();
-    cout << "----------" << endl;
-    intArray1.setValue(13);
-    intArray1.print();
-    intArray3.print();
-    
-    cout << "==========================" << endl;
-    
-    int a,b,c;
-    a = b = c =10;
-    cout << a << " "<< b << " " << c << endl;
-    
-    cout << "==========================" << endl;
-
-    intArray3=intArray1= intArray2;
-    
-    intArray1.print();
-    intArray2.print();
-    intArray3.print();
-    
+    cout << toff3 << endl;
+    cout << toff4 << endl;
+    cout << toff5 << endl;
+    cout << toff6 << endl;
+    cout << toff7 << endl;
+    cout << toff8 << endl;
+    cout << toff9 << endl;
+    cout << toff10 << endl;
+    cout << toff11 << endl;
     return 0;
 }
 
-/*
- 10
- 10
- 19
- 10
- --------------------------------
- 10 10 10 10 10
- 10 10 10 10 10
- -------
- 10 10 10 10 10
- 20 20 20 20 20
- ------------------------------
- 10 10 10 10 10
- 11 11 11 11 11
- ----------
- 10 10 10 10 10
- 10 10 10 10 10
- ----------
- 13 13 13 13 13
- 10 10 10 10 10
- ==========================
- 10 10 10
- Program ended with exit code: 0
-*/
+//EmployeeName: Lebron James
+//Id: 1123
+//SickLeave: 7.5
+//Vocation: 7.5
+//Unpaid:5
+//
+//EmployeeName: Lebron James
+//Id: 1123
+//SickLeave: 8.75
+//Vocation: 7.5
+//Unpaid:5
+//
+//EmployeeName: Lebron James
+//Id: 1123
+//SickLeave: 8.75
+//Vocation: 7.5
+//Unpaid:5
+//
+//EmployeeName: Justin bieber
+//Id: 1126
+//SickLeave: 8.75
+//Vocation: 10
+//Unpaid:10
+//
+//EmployeeName: Naruto Km
+//Id: 100
+//SickLeave: 10
+//Vocation: 10.25
+//Unpaid:10
+//
+//EmployeeName: Kim Jeong
+//Id: 3311
+//SickLeave: 11.25
+//Vocation: 10.25
+//Unpaid:10
+//
+//EmployeeName: JOOPER
+//Id: 2002
+//SickLeave: 12.5
+//Vocation: 10.125
+//Unpaid:10
+//
+//EmployeeName: KENNy D
+//Id: 2019
+//SickLeave: 6.875
+//Vocation: 10
+//Unpaid:10
+//
+//EmployeeName: Marshall D
+//Id: 1002
+//SickLeave: 5.625
+//Vocation: 10.375
+//Unpaid:10
+//
+//EmployeeName: White bread
+//Id: 1111
+//SickLeave: 2.875
+//Vocation: 10.375
+//Unpaid:10
+//
+//EmployeeName: Jonny Danny
+//Id: 1114
+//SickLeave: 7.5
+//Vocation: 10.375
+//Unpaid:10
+//
+//EmployeeName: LOVE CRAZY
+//Id: 2040
+//SickLeave: 8.375
+//Vocation: 10.375
+//Unpaid:10
